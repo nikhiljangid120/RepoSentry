@@ -10,7 +10,7 @@ const mcp = process.env.ARMORIQ_MCP_NAME!;
 const client = new ArmorIQClient({ apiKey: process.env.ARMORIQ_API_KEY, userId: process.env.ARMORIQ_USER_ID, agentId: process.env.ARMORIQ_AGENT_ID, timeout: 30000, mcpCredentials: { [mcp]: { authType: 'bearer', token: process.env.MCP_TRANSPORT_SECRET! } } });
 // Passive debugging only. Published 0.6.10 declares this internal accessor.
 // All execution still uses the official capture/token/invoke flow.
-client._sessionInternals().httpClient.interceptors.response.use(async response => {
+client._sessionInternals().httpClient.interceptors.response.use(async (response: any) => {
   if (response.config.url?.endsWith('/invoke')) {
     const safe = redact({ status: response.status, data: response.data });
     await mkdir(dataDir, { recursive: true }); await writeFile(join(dataDir, 'proxy-diagnostic.json'), JSON.stringify(safe, null, 2)); console.log('Actual proxy response:', safe);
