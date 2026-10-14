@@ -2,6 +2,8 @@
 
 An evidence-first security lab for AI repository workflows. Issues and README files can carry untrusted instructions. RepoSentry lets a model select narrowly scoped tools, routes every invocation through ArmorIQ, and checks actual MCP receipts and sandbox state before displaying an outcome.
 
+**Flow State entry submitted and confirmed on October 14, 2026.** Team RepoSentry, solo. [Official form confirmation](docs/screenshots/submission-confirmation.png).
+
 **Current status: genuine live acceptance PASSED on October 14, 2026.** The registered agent and MCP server executed an allowed read through ArmorIQ; the platform denied the restricted operation at the proxy, and the protected marker and execution receipt remained absent. See [genuine live evidence](docs/evidence/live-acceptance.json), [active policy definition](docs/evidence/policy.live.generated.yaml), and docs/progress.md. Submission and video status are tracked separately.
 
 [Try the hosted demo](https://reposentry-8c31.onrender.com) — genuine hosted allow/block acceptance passed. Free hosting may need about a minute to wake after inactivity; choose one of the three sandbox presets. [Hosted proof](docs/evidence/hosted-acceptance.json) is also available in the app as clearly labeled archived evidence after restarts.

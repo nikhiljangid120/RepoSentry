@@ -19,7 +19,7 @@
 - [x] Public live demo deployed on Render Free and real hosted MCP/policy acceptance passed: https://reposentry-8c31.onrender.com
 - [x] ArmorTools Pro activation verified in the console.
 - [x] Authorized X post published with required tag/hashtag: https://x.com/JangidJohny/status/2110301999493439934
-- [ ] Current official hackathon rules checked; final form completed with actual links.
+- [x] Current official hackathon rules checked; final form completed with actual links and submitted. The form confirmed: "Thanks for submitting. You'll hear from us after judging closes."
 
 Run final checks described in README. Local tests cannot check the mandatory live boxes. If live acceptance fails, inspect stored evidence and platform audit logs; fix policy or connectivity and rerun. Do not relabel missing configuration or technical failures as blocks.
 
@@ -41,4 +41,4 @@ git push -u origin main
 
 Do not commit `.env`, runtime evidence with unsanitized content, or secret exports. No substantial starter template or pre-existing app code was used; disclose third-party SDKs and libraries. The official final form has been reviewed; remaining pages and final submission are pending Pro entitlement verification.
 
-Team: RepoSentry, solo. Google form sign-in and verified Pro declaration are complete. Actual repository, hosted app, accepted-host video and X-post links are entered. Evidence-backed takeaways and Codex disclosure are prepared on the final optional page; final submission confirmation remains pending. The official Discord announces a deadline of October 17 at 11:59 PM IST and live-demo availability October 17–21. See organizer-updates.md for the original/newer video-length conflict and actual sources.
+Team: RepoSentry, solo. Google form sign-in and verified Pro declaration are complete. Actual repository, hosted app, accepted-host video and X-post links were submitted with evidence-backed takeaways and Codex disclosure. Final confirmation was observed and saved in docs/screenshots/submission-confirmation.png. The official Discord announces a deadline of October 17 at 11:59 PM IST and live-demo availability October 17–21. See organizer-updates.md for the original/newer video-length conflict and actual sources.
