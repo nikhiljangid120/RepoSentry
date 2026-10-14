@@ -2,7 +2,7 @@
 
 An evidence-first security lab for AI repository workflows. Issues and README files can carry untrusted instructions. RepoSentry lets a model select narrowly scoped tools, routes every invocation through ArmorIQ, and checks actual MCP receipts and sandbox state before displaying an outcome.
 
-**Current status: agent and MCP registered; real proxy denial verified; allowed execution under investigation.** Groq model tool selection and real ArmorIQ token issuance have been exercised. The complete live acceptance suite has not passed yet. See docs/progress.md for the current evidence and remaining submission work.
+**Current status: genuine live acceptance PASSED on October 14, 2026.** The registered agent and MCP server executed an allowed read through ArmorIQ; the platform denied the restricted operation at the proxy, and the protected marker and execution receipt remained absent. See [genuine live evidence](docs/evidence/live-acceptance.json), [active policy definition](docs/evidence/policy.live.generated.yaml), and docs/progress.md. Submission and video status are tracked separately.
 
 ## Architecture
 
@@ -36,14 +36,14 @@ Use the official [platform](https://platform.armoriq.ai/), [SDK reference](https
 3. Register RepoSentry in Agents → Add Agent. Configure the correct manual framework/capability metadata for this custom HTTP agent; do not claim it implements A2A. The local UI/API should remain loopback-only. If the wizard requires a framework-specific endpoint or public agent URL, confirm the supported custom-agent onboarding with ArmorIQ before marking registration complete. Copy the actual agent and user/service IDs into `.env`.
 4. Bind an active policy to the registered agent and MCP server for the exact identity used by the API key (and optional end-user email). Allow `read_test_issue` and `inspect_test_repository`. Add an explicit DENY rule for `perform_restricted_test_action`. Check priorities and target binding. The enforcement docs describe default allow for unmatched rules; an omitted tool is insufficient proof of denial. Save/export the platform-generated policy; no unverified YAML is supplied here.
 5. Generate a random 32+ character MCP transport secret locally, put it in `.env`, and configure the server's bearer credential in the platform. The SDK sends the same credential through its documented MCP credential mechanism. Do not share it with the model.
-6. Provide an authorized OpenAI project API key and a Responses/function-calling compatible `OPENAI_MODEL` available to that account. Set `LIVE_RUN_ENABLED=true` only after authorizing API charges and finishing onboarding. The build does not incur model API costs by itself.
+6. Configure a supported provider using LLM_PROVIDER, LLM_MODEL and its API key. Groq, Gemini and OpenRouter use their documented compatible chat APIs; OpenAI uses Responses. See docs/providers.md. Set LIVE_RUN_ENABLED=true only after authorizing the account's free tier or a paid spending limit and finishing onboarding.
 7. Start MCP and run `npm run test:live`. This command uses the real model and official ArmorIQ SDK. If the proxy cannot forward to the authenticated MCP endpoint, treat it as an integration failure, never a denial.
 
 ## Environment
 
 `.env.example` contains names and placeholders only. ARMORIQ_API_KEY, ARMORIQ_USER_ID, ARMORIQ_AGENT_ID and ARMORIQ_MCP_NAME identify your registered platform resources. ARMORIQ_USER_EMAIL is optional per-call identity scoping. OPENAI_API_KEY and OPENAI_MODEL configure the model. MCP_TRANSPORT_SECRET protects proxy-to-tool transport; this bearer gate is not the policy engine. LIVE_RUN_ENABLED is explicit local API-spend opt-in. PORT defaults to 3001, MCP_PORT to 3002, MCP_HOST to loopback and DATA_DIR to `.reposentry`.
 
-The application requires explicit environment credentials; it does not read or print personal credential files. Client constructor failures and malformed configuration are reported as technical failures. The SDK uses its shipped official endpoints and SSL validation; this app does not override them with invented endpoint URLs.
+The application requires explicit environment credentials; it does not read or print personal credential files. Select LLM_PROVIDER and LLM_MODEL; its key is GROQ_API_KEY, GEMINI_API_KEY, OPENROUTER_API_KEY or OPENAI_API_KEY. OPENAI_MODEL is retained as a legacy fallback. Client constructor failures and malformed configuration are reported as technical failures. The SDK uses its shipped official endpoints and SSL validation.
 
 ## Demonstrations and evidence
 
@@ -73,4 +73,4 @@ MCP bearer authentication prevents anonymous ingress; possession of that secret 
 
 ## Submission
 
-See [architecture](docs/architecture.md), [verification report](docs/verification.md), [≤90 second demo script](docs/demo-script.md), [submission checklist](docs/submission-checklist.md), and [project description](docs/project-description.md). This is newly authored project code; no substantial pre-existing application or starter template was reused. Open-source dependency licenses apply. No remote repository was published or pushed. Verify the hackathon's actual current rules independently before submission; the dates and requirements came from the supplied brief.
+See [architecture](docs/architecture.md), [historical verification report](docs/verification.md), [current progress](docs/progress.md), [≤90 second demo script](docs/demo-script.md), [submission checklist](docs/submission-checklist.md), and [project description](docs/project-description.md). This is newly authored project code; no substantial pre-existing application or starter template was reused. Open-source dependency licenses apply. Source is published at https://github.com/nikhiljangid120/RepoSentry. Local verification passes 42 tests, lint and production build; live enforcement proof is recorded separately. The official final form requires active ArmorTools Pro access for each member; registration approval alone does not establish that entitlement.

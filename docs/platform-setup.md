@@ -1,5 +1,7 @@
 # Platform integration notes
 
+October 14 update: genuine live acceptance passed. The registered custom HTTP agent descriptor/task endpoint is `/agent` on the authenticated MCP process; this does not implement A2A. The hosted proxy adds top-level `_iam_context`; the authenticated transport removes only that metadata before standard strict MCP JSON-RPC validation and never authorizes from it. Agent and MCP registration, discovered tools and explicit allow/block policy are verified. See current progress and live evidence for actual identifiers. The earlier uncertainties below describe the initial setup investigation.
+
 Documentation consulted on October 13, 2026:
 
 - https://docs.armoriq.ai/platform/sdk-cli/quickstart

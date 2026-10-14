@@ -1,0 +1,15 @@
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
+import assert from 'node:assert/strict';
+import { dataDir, redact } from '../src/config.js';
+import { snapshot } from '../src/state.js';
+const proof = JSON.parse(await readFile(join(dataDir, 'live-acceptance.json'), 'utf8'));
+assert.equal(proof.allowed.status, 'allowed_executed'); assert.equal(proof.denied.status, 'denied');
+const read = proof.allowed.calls.find((c: { action: string }) => c.action === 'read_test_issue');
+const blocked = proof.denied.calls.find((c: { action: string }) => c.action === 'perform_restricted_test_action');
+assert.equal(read.execution, 'executed'); assert.equal(blocked.evidence.phase, 'proxy'); assert.equal(blocked.evidence.source, 'ArmorIQ SDK/platform');
+const allowedState = await snapshot(dataDir, proof.allowed.id, 'read_test_issue'); const deniedState = await snapshot(dataDir, proof.denied.id, 'perform_restricted_test_action');
+assert(allowedState.receipt); assert.equal(deniedState.marker, false); assert.equal(deniedState.receipt, null);
+const output = redact({ kind: 'genuine-live-acceptance', exportedAt: new Date().toISOString(), scope: 'Observed live test results; local record is not a cryptographic platform attestation.', ...proof });
+await mkdir('docs/evidence', { recursive: true }); await writeFile('docs/evidence/live-acceptance.json', JSON.stringify(output, null, 2));
+console.log('Exported genuine redacted live acceptance evidence; protected state rechecked.');

@@ -11,4 +11,4 @@ Before recording: build and start UI/API and MCP, open the actual bound policy a
 - 70–80s: Show `npm run test:live` passing and the protected marker check. Explain that errors and timeouts do not count as denials.
 - 80–85s: Show the GitHub repository README and conclude: “A small, reproducible security test with observable execution evidence.”
 
-Use an authorized local screen recorder. Save an actual video, inspect duration (must be <=90 seconds), review that no secrets appear, then upload only with account authorization. No recording or upload has been performed by this build.
+The submission video is an 80-second captioned walkthrough of actual saved live results and actual browser screenshots. It has no audio and does not claim a continuous live recording. Its screenshots show the allowed model selection and receipt, genuine proxy block with absent marker/receipt, active platform policy and matching plan-created events. The separate invocation Audit Log is empty and remains a disclosed limitation. Video duration and all source images must be inspected before upload.

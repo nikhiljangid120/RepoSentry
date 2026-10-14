@@ -6,6 +6,7 @@ import { dataDir, readiness, redact } from './config.js';
 import { history } from './state.js';
 import { evidenceBundle } from './evidence.js';
 import type { Run } from './contracts.js';
+import { acceptanceStatus } from './acceptance.js';
 type Investigator = (request: string, onProgress?: (run: Run) => void) => Promise<Run>;
 export function createAgentApp(dir = dataDir, runInvestigation: Investigator = (request, onProgress) => investigate(request, { dir, onProgress })) {
   const app = express(); app.disable('x-powered-by'); app.use(express.json({ limit: '8kb' }));
@@ -16,6 +17,7 @@ export function createAgentApp(dir = dataDir, runInvestigation: Investigator = (
     next();
   });
   app.get('/api/health', (_req, res) => { res.json(readiness()); });
+  app.get('/api/acceptance', async (_req, res) => { res.json(await acceptanceStatus(dir)); });
   app.get('/api/runs', async (_req, res) => { res.json(await history(dir)); });
   app.get('/api/runs/:id/evidence', async (req, res) => {
     if (!z.string().uuid().safeParse(req.params.id).success) { res.status(400).json({ error: 'Invalid run ID' }); return; }
