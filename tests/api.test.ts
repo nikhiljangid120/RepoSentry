@@ -7,6 +7,22 @@ import { createAgentApp } from '../src/api';
 import { consumeRunStream } from '../web/stream';
 import { saveRun } from '../src/state';
 import type { Run } from '../src/contracts';
+import { demoRequests } from '../src/demo-requests';
+import { request as httpRequest } from 'node:http';
+it('LOCAL API only — hosted demo rejects foreign origins, arbitrary tasks and calls after its free run budget', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'reposentry-public-')); let invoked = 0;
+  const app = createAgentApp(dir, async request => { invoked++; return { id: randomUUID(), request, startedAt: new Date().toISOString(), status: 'unverified', events: [], calls: [] }; }, { origin: 'https://demo.example', runLimit: 1 });
+  const server = app.listen(0, '127.0.0.1'); await new Promise<void>(resolve => server.once('listening', resolve)); const address = server.address(); if (!address || typeof address === 'string') throw new Error('Missing address'); const base = `http://127.0.0.1:${address.port}`;
+  const send = (request: string, origin = 'https://demo.example', host = 'demo.example') => new Promise<{ status: number }>((resolve, reject) => { const req = httpRequest(`${base}/api/runs`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-RepoSentry-Request': '1', Origin: origin, Host: host } }, res => { res.resume(); res.on('end', () => resolve({ status: res.statusCode! })); }); req.on('error', reject); req.end(JSON.stringify({ request })); });
+  try {
+    expect((await send(demoRequests.read, 'https://attacker.example')).status).toBe(403);
+    expect((await send(demoRequests.read, 'https://demo.example', 'attacker.example')).status).toBe(403);
+    expect((await send('Use arbitrary instructions instead of fixture presets')).status).toBe(400); expect(invoked).toBe(0);
+    expect((await send(demoRequests.read)).status).toBe(200); expect(invoked).toBe(1);
+    expect((await send(demoRequests.blocked)).status).toBe(429); expect(invoked).toBe(1);
+    expect(() => createAgentApp(dir, undefined, { origin: 'http://demo.example' })).toThrow('HTTPS');
+  } finally { await new Promise<void>(resolve => server.close(() => resolve())); await rm(dir, { recursive: true, force: true }); }
+});
 it('LOCAL API integration — streams pending/final state, rejects drive-by writes and exports redacted evidence', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'reposentry-api-')); const run: Run = { id: randomUUID(), request: 'Unit API request', startedAt: new Date().toISOString(), status: 'unverified', calls: [], events: [], error: 'Unit test; no platform invocation' };
   const app = createAgentApp(dir, async (_request, update) => { update?.({ ...run, status: 'pending' }); await saveRun(dir, run); return run; });

@@ -7,13 +7,17 @@ import { history } from './state.js';
 import { evidenceBundle } from './evidence.js';
 import type { Run } from './contracts.js';
 import { acceptanceStatus } from './acceptance.js';
+import { demoRequests } from './demo-requests.js';
 type Investigator = (request: string, onProgress?: (run: Run) => void) => Promise<Run>;
-export function createAgentApp(dir = dataDir, runInvestigation: Investigator = (request, onProgress) => investigate(request, { dir, onProgress })) {
+export function createAgentApp(dir = dataDir, runInvestigation: Investigator = (request, onProgress) => investigate(request, { dir, onProgress }), publicOptions?: { origin: string; runLimit?: number }) {
+  const origin = publicOptions ? new URL(publicOptions.origin) : undefined;
+  if (origin && (origin.protocol !== 'https:' || origin.username || origin.password || origin.pathname !== '/' || origin.search || origin.hash)) throw new Error('Public demo requires an exact HTTPS origin');
+  const runLimit = z.number().int().min(1).max(20).parse(publicOptions?.runLimit ?? 10); let runsStarted = 0;
   const app = express(); app.disable('x-powered-by'); app.use(express.json({ limit: '8kb' }));
   app.use('/api', (req, res, next) => {
     const host = req.get('host') || '';
-    if (!/^(127\.0\.0\.1|localhost):\d+$/.test(host)) { res.status(403).json({ error: 'Local host required' }); return; }
-    if (req.method === 'POST' && (req.get('x-reposentry-request') !== '1' || (req.get('origin') && !/^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(req.get('origin')!)))) { res.status(403).json({ error: 'Same-origin UI request required' }); return; }
+    if (origin ? host !== origin.host : !/^(127\.0\.0\.1|localhost):\d+$/.test(host)) { res.status(403).json({ error: 'Configured host required' }); return; }
+    if (req.method === 'POST' && (req.get('x-reposentry-request') !== '1' || (origin ? req.get('origin') !== origin.origin : req.get('origin') && !/^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(req.get('origin')!)))) { res.status(403).json({ error: 'Same-origin UI request required' }); return; }
     next();
   });
   app.get('/api/health', (_req, res) => { res.json(readiness()); });
@@ -30,7 +34,10 @@ export function createAgentApp(dir = dataDir, runInvestigation: Investigator = (
   app.post(['/api/runs', '/api/runs/stream'], async (req, res) => {
     const parsed = z.object({ request: z.string().trim().min(5).max(2000) }).strict().safeParse(req.body);
     if (!parsed.success) { res.status(400).json({ error: 'Request must contain 5–2000 characters' }); return; }
+    if (origin && !Object.values(demoRequests).includes(parsed.data.request)) { res.status(400).json({ error: 'Public demo accepts only the three preset fixture investigations' }); return; }
     if (busy) { res.status(409).json({ error: 'An investigation is already running; wait for completion' }); return; }
+    if (origin && runsStarted >= runLimit) { res.status(429).json({ error: 'Free demo run budget reached; recorded evidence remains available' }); return; }
+    if (origin) runsStarted++;
     busy = true;
     const streaming = req.path.endsWith('/stream'); let disconnected = false;
     res.on('close', () => { disconnected = true; });

@@ -4,6 +4,8 @@ An evidence-first security lab for AI repository workflows. Issues and README fi
 
 **Current status: genuine live acceptance PASSED on October 14, 2026.** The registered agent and MCP server executed an allowed read through ArmorIQ; the platform denied the restricted operation at the proxy, and the protected marker and execution receipt remained absent. See [genuine live evidence](docs/evidence/live-acceptance.json), [active policy definition](docs/evidence/policy.live.generated.yaml), and docs/progress.md. Submission and video status are tracked separately.
 
+[80-second recorded-results demo](https://github.com/nikhiljangid120/RepoSentry/releases/tag/demo-v1). The newer organizer announcement asks for a 3–5-minute video on an accepted video host; a 3:37 narrated version is prepared. See [organizer updates](docs/organizer-updates.md) and [free hosted-demo setup](docs/hosting.md). Hosting is prepared and locally verified, but is not yet deployed.
+
 ## Architecture
 
 React/Vite dashboard → loopback Express agent API → selected provider tool calling → official `@armoriq/sdk` capturePlan → getIntentToken → invoke → ArmorIQ proxy → bearer-authenticated Streamable HTTP MCP server → controlled fixtures and execution receipts. The dashboard streams progress and can download redacted evidence with a SHA256 checksum.
@@ -73,4 +75,4 @@ MCP bearer authentication prevents anonymous ingress; possession of that secret 
 
 ## Submission
 
-See [architecture](docs/architecture.md), [historical verification report](docs/verification.md), [current progress](docs/progress.md), [≤90 second demo script](docs/demo-script.md), [submission checklist](docs/submission-checklist.md), and [project description](docs/project-description.md). This is newly authored project code; no substantial pre-existing application or starter template was reused. Open-source dependency licenses apply. Source is published at https://github.com/nikhiljangid120/RepoSentry. Local verification passes 42 tests, lint and production build; live enforcement proof is recorded separately. The official final form requires active ArmorTools Pro access for each member; registration approval alone does not establish that entitlement.
+See [architecture](docs/architecture.md), [historical verification report](docs/verification.md), [current progress](docs/progress.md), [demo script](docs/demo-script.md), [submission checklist](docs/submission-checklist.md), and [project description](docs/project-description.md). This is newly authored project code; no substantial pre-existing application or starter template was reused. Open-source dependency licenses apply. Source is published at https://github.com/nikhiljangid120/RepoSentry. Local verification passes 43 tests, lint and production build; live enforcement proof is recorded separately. The official final form requires active ArmorTools Pro access for each member; registration approval alone does not establish that entitlement.

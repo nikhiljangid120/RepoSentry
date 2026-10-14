@@ -1,0 +1,11 @@
+import { createAgentApp } from './api.js';
+import { createMcpApp } from './mcp-app.js';
+import { dataDir, port } from './config.js';
+import { installRedactedLogging } from './logging.js';
+installRedactedLogging();
+const origin = process.env.PUBLIC_DEMO_ORIGIN || process.env.RENDER_EXTERNAL_URL;
+if (!origin) throw new Error('Set PUBLIC_DEMO_ORIGIN to the actual HTTPS service origin');
+const app = createMcpApp(dataDir, process.env.MCP_TRANSPORT_SECRET || '');
+app.get('/healthz', (_req, res) => res.json({ service: 'RepoSentry', status: 'up' }));
+app.use(createAgentApp(dataDir, undefined, { origin }));
+app.listen(port(process.env.PORT, 3001), '0.0.0.0', () => console.log('Hosted RepoSentry started; live enforcement remains subject to acceptance verification.'));
