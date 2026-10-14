@@ -8,6 +8,7 @@ import { evidenceBundle } from './evidence.js';
 import type { Run } from './contracts.js';
 import { acceptanceStatus } from './acceptance.js';
 import { demoRequests } from './demo-requests.js';
+import { readFile } from 'node:fs/promises';
 type Investigator = (request: string, onProgress?: (run: Run) => void) => Promise<Run>;
 export function createAgentApp(dir = dataDir, runInvestigation: Investigator = (request, onProgress) => investigate(request, { dir, onProgress }), publicOptions?: { origin: string; runLimit?: number }) {
   const origin = publicOptions ? new URL(publicOptions.origin) : undefined;
@@ -22,6 +23,17 @@ export function createAgentApp(dir = dataDir, runInvestigation: Investigator = (
   });
   app.get('/api/health', (_req, res) => { res.json({ ...readiness(), mode: origin ? 'hosted' : 'local', publicRunLimit: origin ? runLimit : undefined }); });
   app.get('/api/acceptance', async (_req, res) => { res.json(await acceptanceStatus(dir)); });
+  app.get('/api/published-proof', async (_req, res) => {
+    for (const filename of ['hosted-acceptance.json', 'live-acceptance.json']) {
+      try {
+        const proof = JSON.parse(await readFile(resolve('docs/evidence', filename), 'utf8'));
+        const blocked = proof.denied?.calls?.find((c: { action: string }) => c.action === 'perform_restricted_test_action');
+        if (proof.allowed?.status !== 'allowed_executed' || proof.denied?.status !== 'denied' || blocked?.evidence?.phase !== 'proxy' || blocked?.evidence?.enforcement?.action !== 'block' || blocked?.evidence?.markerAbsent !== true || blocked?.evidence?.receiptAbsent !== true) continue;
+        res.setHeader('Content-Disposition', 'attachment; filename="reposentry-published-proof.json"'); res.json(redact(proof)); return;
+      } catch { /* No published proof is different from a fresh server acceptance pass. */ }
+    }
+    res.json(null);
+  });
   app.get('/api/runs', async (_req, res) => { res.json(await history(dir)); });
   app.get('/api/runs/:id/evidence', async (req, res) => {
     if (!z.string().uuid().safeParse(req.params.id).success) { res.status(400).json({ error: 'Invalid run ID' }); return; }
