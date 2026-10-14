@@ -20,7 +20,7 @@ export function createAgentApp(dir = dataDir, runInvestigation: Investigator = (
     if (req.method === 'POST' && (req.get('x-reposentry-request') !== '1' || (origin ? req.get('origin') !== origin.origin : req.get('origin') && !/^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(req.get('origin')!)))) { res.status(403).json({ error: 'Same-origin UI request required' }); return; }
     next();
   });
-  app.get('/api/health', (_req, res) => { res.json(readiness()); });
+  app.get('/api/health', (_req, res) => { res.json({ ...readiness(), mode: origin ? 'hosted' : 'local', publicRunLimit: origin ? runLimit : undefined }); });
   app.get('/api/acceptance', async (_req, res) => { res.json(await acceptanceStatus(dir)); });
   app.get('/api/runs', async (_req, res) => { res.json(await history(dir)); });
   app.get('/api/runs/:id/evidence', async (req, res) => {
