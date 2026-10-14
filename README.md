@@ -4,7 +4,9 @@ An evidence-first security lab for AI repository workflows. Issues and README fi
 
 **Current status: genuine live acceptance PASSED on October 14, 2026.** The registered agent and MCP server executed an allowed read through ArmorIQ; the platform denied the restricted operation at the proxy, and the protected marker and execution receipt remained absent. See [genuine live evidence](docs/evidence/live-acceptance.json), [active policy definition](docs/evidence/policy.live.generated.yaml), and docs/progress.md. Submission and video status are tracked separately.
 
-[80-second recorded-results demo](https://github.com/nikhiljangid120/RepoSentry/releases/tag/demo-v1). The newer organizer announcement asks for a 3–5-minute video on an accepted video host; a 3:37 narrated version is prepared. See [organizer updates](docs/organizer-updates.md) and [free hosted-demo setup](docs/hosting.md). Hosting is prepared and locally verified, but is not yet deployed.
+[Try the hosted demo](https://reposentry-8c31.onrender.com) — genuine hosted allow/block acceptance passed. Free hosting may need about a minute to wake after inactivity; choose one of the three sandbox presets. [Hosted proof](docs/evidence/hosted-acceptance.json) is also available in the app as clearly labeled archived evidence after restarts.
+
+[Full narrated demo on YouTube](https://youtu.be/jThbzoZPyGM) — 3:37, published Unlisted with no copyright issues found by YouTube checks. [80-second recorded-results cut](https://github.com/nikhiljangid120/RepoSentry/releases/tag/demo-v1). See [organizer updates](docs/organizer-updates.md) and [free hosted-demo setup](docs/hosting.md).
 
 ## Architecture
 
